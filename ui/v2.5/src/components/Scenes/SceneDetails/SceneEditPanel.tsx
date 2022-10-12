@@ -701,6 +701,9 @@ PICTURE - TIGHT - 161
       case 'organized-spp':
         currentIds.push("346");
         break;
+      case 'stashdbchecked': 
+        currentIds.push("594");
+        break;
       case 'horizontal': 
         currentIds.push("5");
         break;
@@ -764,6 +767,24 @@ PICTURE - TIGHT - 161
                       case 'tight':
                         currentIds.push("161");
                         break;
+                        case 'bj':
+                          currentIds.push("12");
+                          break;
+                          case 'hj':
+                            currentIds.push("8");
+                            break;
+                            case 'cg':
+                              currentIds.push("27");
+                              break;
+                              case 'rcg':
+                                currentIds.push("25");
+                                break;
+                                case 'doggy':
+                                  currentIds.push("38");
+                                  break;
+                                  case 'missionary':
+                                    currentIds.push("17");
+                                    break;
     }
     formik.setFieldValue("tag_ids", currentIds);
     setMakeDirty(true);
@@ -774,7 +795,7 @@ PICTURE - TIGHT - 161
   return (
     <div id="scene-edit-details">
       <Prompt
-        when={formik.dirty}
+        when={customDirty}
         message={intl.formatMessage({ id: "dialogs.unsaved_changes" })}
       />
 
@@ -940,6 +961,15 @@ PICTURE - TIGHT - 161
                       <div onClick={() => handleCustomTags('organized-s')}>
                         <SceneCustomMarker 
                           icon="organizeds"
+                          paddingTop={""}
+                          paddingLeft={""}
+                          paddingRight={""}
+                          transform={""}
+                        />
+                      </div>
+                      <div onClick={() => handleCustomTags('stashdbchecked')}>
+                        <SceneCustomMarker 
+                          icon="stashdbchecked"
                           paddingTop={""}
                           paddingLeft={""}
                           paddingRight={""}
@@ -1169,6 +1199,70 @@ PICTURE - TIGHT - 161
                         />
                       </div>
                     </div>
+                  </div>
+                  <div className='item8'>
+                  <div style={{ display: "flex", justifyContent: "space-between" }}>
+<div
+  onClick={() => handleCustomTags('bj')}
+>
+<SceneCustomMarker
+  icon="bj"
+  transform={''}
+  paddingTop={'1%'}
+  paddingLeft={''}
+  />
+</div>
+<div
+  onClick={() => handleCustomTags('hj')}
+>
+<SceneCustomMarker
+  icon="hj"
+  transform={''}
+  paddingTop={'1%'}
+  paddingLeft={''}
+  />
+</div>
+<div
+  onClick={() => handleCustomTags('cg')}
+>
+<SceneCustomMarker
+  icon="cg"
+  transform={''}
+  paddingTop={'1%'}
+  paddingLeft={''}
+  />
+</div>
+<div
+  onClick={() => handleCustomTags('rcg')}
+>
+<SceneCustomMarker
+  icon="rcg"
+  transform={'scaleX(-1)'}
+  paddingTop={'1%'}
+  paddingLeft={''}
+  />
+</div>
+<div
+  onClick={() => handleCustomTags('doggy')}
+>
+<SceneCustomMarker
+  icon="doggy"
+  transform={''}
+  paddingTop={'1%'}
+  paddingLeft={''}
+  />
+</div>
+<div
+  onClick={() => handleCustomTags('missionary')}
+>
+<SceneCustomMarker
+  icon="missionary"
+  transform={''}
+  paddingTop={'1%'}
+  paddingLeft={''}
+  />
+</div>
+</div>
                   </div>
                 </div>
               </Col>
