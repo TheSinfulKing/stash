@@ -44,6 +44,7 @@ import {
   faSyncAlt,
   faTrashAlt,
 } from "@fortawesome/free-solid-svg-icons";
+import { SceneCustomMarker } from "./SceneCustomMarker"; 
 
 const SceneScrapeDialog = lazy(() => import("./SceneScrapeDialog"));
 const SceneQueryModal = lazy(() => import("./SceneQueryModal"));
@@ -96,6 +97,9 @@ export const SceneEditPanel: React.FC<IProps> = ({
 
   const [updateScene] = useSceneUpdate();
 
+  const [customDirty, setCustomDirty] = useState(false);
+  const [makeDirty, setMakeDirty] = useState(false);
+
   const schema = yup.object({
     title: yup.string().optional().nullable(),
     details: yup.string().optional().nullable(),
@@ -145,6 +149,15 @@ export const SceneEditPanel: React.FC<IProps> = ({
     validationSchema: schema,
     onSubmit: (values) => onSave(getSceneInput(values)),
   });
+
+  useEffect(() => {
+    if(formik.dirty || makeDirty) {
+      setCustomDirty(true);
+    }
+    else {
+      setCustomDirty(false);
+    } 
+  }, [formik]);
 
   function setRating(v: number) {
     formik.setFieldValue("rating", v);
@@ -270,6 +283,7 @@ export const SceneEditPanel: React.FC<IProps> = ({
       Toast.error(e);
     }
     setIsLoading(false);
+    setMakeDirty(false);
   }
 
   const removeStashID = (stashID: GQL.StashIdInput) => {
@@ -649,6 +663,112 @@ export const SceneEditPanel: React.FC<IProps> = ({
     );
   }
 
+  const getCurrentTagIds = () => {
+    const values = formik.values;
+    return values.tag_ids;
+  }
+
+/*
+ORGANIZED - S - 345
+ORGANIZED - SPP - 346
+PERFORMER - Pornstar - 1
+PERFORMER - Amateur - 7
+PERFORMER - White - 82
+PERFORMER - Black - 102
+PERFORMER - Lightskin - 244
+PERFORMER - Asian - 49
+PERFORMER - Indian - 189
+PERFORMER - Hispanic - 93
+PERFORMER - Middle Eastern - 67
+PERFORMER - Blonde - 9
+PERFORMER - Brunette - 18
+PERFORMER - Redhead - 28
+PICTURE - Clothed - 75
+PICTURE - Tits - Clothed - 73
+PICTURE - Nude - 76
+PICTURE - Tits - Nude - 72
+PICTURE - Bikini - 70
+PICTURE - TIGHT - 161
+*/
+
+  const handleCustomTags = (tag: string) => {
+    const currentIds = getCurrentTagIds();
+
+    switch(tag) {
+      case 'organized-s':
+        currentIds.push("345");
+        break;
+      case 'organized-spp':
+        currentIds.push("346");
+        break;
+      case 'horizontal': 
+        currentIds.push("5");
+        break;
+      case 'horizvert':
+        currentIds.push("5", "6");
+        break;
+      case 'vert':
+        currentIds.push("6");
+        break;
+      case 'pornstar':
+        currentIds.push("1");
+        break;
+      case 'amateur':
+        currentIds.push("7");
+        break;
+      case 'white':
+        currentIds.push("2");
+        break;
+      case 'black':
+        currentIds.push("102");
+        break;
+      case 'lightskin':
+        currentIds.push("244");
+        break;
+      case 'asian':
+        currentIds.push("49");
+        break;
+      case 'indian':
+        currentIds.push("189");
+        break;
+      case 'hispanic':
+        currentIds.push("93");
+        break;
+      case 'middle-eastern':
+        currentIds.push("67");
+        break;
+      case 'blonde':
+        currentIds.push("9");
+        break;
+        case 'brunette':
+          currentIds.push("18");
+          break;
+          case 'redhead':
+            currentIds.push("28");
+            break;
+            case 'clothed':
+              currentIds.push("75");
+              break;
+              case 'tclothed':
+                currentIds.push("73");
+                break;
+                case 'nude':
+                  currentIds.push("76");
+                  break;
+                  case 'tnude':
+                    currentIds.push("72");
+                    break;
+                    case 'bikini':
+                      currentIds.push("70");
+                      break;
+                      case 'tight':
+                        currentIds.push("161");
+                        break;
+    }
+    formik.setFieldValue("tag_ids", currentIds);
+    setMakeDirty(true);
+  }
+
   if (isLoading) return <LoadingIndicator />;
 
   return (
@@ -666,7 +786,7 @@ export const SceneEditPanel: React.FC<IProps> = ({
             <Button
               className="edit-button"
               variant="primary"
-              disabled={!formik.dirty}
+              disabled={!customDirty}
               onClick={() => formik.submitForm()}
             >
               <FormattedMessage id="actions.save" />
@@ -804,7 +924,263 @@ export const SceneEditPanel: React.FC<IProps> = ({
                 {renderTableMovies()}
               </Col>
             </Form.Group>
-
+            <Form.Group controlId="customtags" as={Row}>
+              {FormUtils.renderLabel({
+                title: intl.formatMessage({ id: "Custom Tags" }),
+                labelProps: {
+                  column: true,
+                  sm: 3,
+                  xl: 12,
+                },
+              })}
+              <Col sm={9} xl={12}>
+                <div style={{display: 'grid', rowGap: '0.5em', height: '0.000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001%'}}>
+                  <div className='item1'>
+                    <div style={{ display: "flex", justifyContent: "space-evenly" }}>
+                      <div onClick={() => handleCustomTags('organized-s')}>
+                        <SceneCustomMarker 
+                          icon="organizeds"
+                          paddingTop={""}
+                          paddingLeft={""}
+                          paddingRight={""}
+                          transform={""}
+                        />
+                      </div>
+                      <div onClick={() => handleCustomTags('organized-spp')}>
+                        <SceneCustomMarker 
+                          icon="organizedspp"
+                          paddingTop={""}
+                          paddingLeft={""}
+                          paddingRight={""}
+                          transform={""}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div className='item2'>
+                    <div style={{ display: "flex", justifyContent: "space-evenly" }}>
+                    <div onClick={() => handleCustomTags('horizontal')}>
+                        <SceneCustomMarker 
+                          icon="horizontal"
+                          paddingTop={""}
+                          paddingLeft={""}
+                          paddingRight={""}
+                          transform={""}
+                        />
+                      </div>
+                      <div onClick={() => handleCustomTags('horizvert')}>
+                        <SceneCustomMarker 
+                          icon="horizvert"
+                          paddingTop={""}
+                          paddingLeft={""}
+                          paddingRight={""}
+                          transform={""}
+                        />
+                      </div>
+                      <div onClick={() => handleCustomTags('vert')}>
+                        <SceneCustomMarker 
+                          icon="vert"
+                          paddingTop={""}
+                          paddingLeft={""}
+                          paddingRight={""}
+                          transform={'rotate(90deg)'}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div className='item3'>
+                    <div style={{ display: "flex", justifyContent: "space-evenly" }}>
+                    <div onClick={() => handleCustomTags('pornstar')}>
+                        <SceneCustomMarker 
+                          icon="pornstar"
+                          paddingTop={""}
+                          paddingLeft={""}
+                          paddingRight={""}
+                          transform={""}
+                        />
+                      </div>
+                      <div onClick={() => handleCustomTags('amateur')}>
+                        <SceneCustomMarker 
+                          icon="amateur"
+                          paddingTop={""}
+                          paddingLeft={""}
+                          paddingRight={""}
+                          transform={""}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div className='item4'>
+                    <div style={{ display: "flex", justifyContent: "space-evenly" }}>
+                    <div onClick={() => handleCustomTags('indian')}>
+                        <SceneCustomMarker 
+                          icon="indian"
+                          paddingTop={""}
+                          paddingLeft={""}
+                          paddingRight={""}
+                          transform={""}
+                        />
+                      </div>
+                      <div onClick={() => handleCustomTags('middle-eastern')}>
+                        <SceneCustomMarker 
+                          icon="middle-eastern"
+                          paddingTop={""}
+                          paddingLeft={""}
+                          paddingRight={""}
+                          transform={""}
+                        />
+                      </div>
+                      <div onClick={() => handleCustomTags('hispanic')}>
+                        <SceneCustomMarker 
+                          icon="hispanic"
+                          paddingTop={""}
+                          paddingLeft={""}
+                          paddingRight={""}
+                          transform={""}
+                        />
+                      </div>
+                    <div onClick={() => handleCustomTags('white')}>
+                        <SceneCustomMarker 
+                          icon="white"
+                          paddingTop={""}
+                          paddingLeft={""}
+                          paddingRight={""}
+                          transform={""}
+                        />
+                      </div>
+                      <div onClick={() => handleCustomTags('asian')}>
+                        <SceneCustomMarker 
+                          icon="asian"
+                          paddingTop={""}
+                          paddingLeft={""}
+                          paddingRight={""}
+                          transform={""}
+                        />
+                      </div>
+                      <div onClick={() => handleCustomTags('lightskin')}>
+                        <SceneCustomMarker 
+                          icon="lightskin"
+                          paddingTop={""}
+                          paddingLeft={""}
+                          paddingRight={""}
+                          transform={""}
+                        />
+                      </div>
+                      <div onClick={() => handleCustomTags('black')}>
+                        <SceneCustomMarker 
+                          icon="black"
+                          paddingTop={""}
+                          paddingLeft={""}
+                          paddingRight={""}
+                          transform={""}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div className='item5'>
+                    <div style={{ display: "flex", justifyContent: "space-evenly" }}>
+                    <div onClick={() => handleCustomTags('blonde')}>
+                        <SceneCustomMarker 
+                          icon="blonde"
+                          paddingTop={""}
+                          paddingLeft={""}
+                          paddingRight={""}
+                          transform={""}
+                        />
+                      </div>
+                      <div onClick={() => handleCustomTags('brunette')}>
+                        <SceneCustomMarker 
+                          icon="brunette"
+                          paddingTop={""}
+                          paddingLeft={""}
+                          paddingRight={""}
+                          transform={""}
+                        />
+                      </div>
+                      <div onClick={() => handleCustomTags('redhead')}>
+                        <SceneCustomMarker 
+                          icon="redhead"
+                          paddingTop={""}
+                          paddingLeft={""}
+                          paddingRight={""}
+                          transform={""}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div className='item6'>
+                    <div style={{ display: "flex", justifyContent: "space-evenly" }}>
+                    <div onClick={() => handleCustomTags('clothed')}>
+                        <SceneCustomMarker 
+                          icon="clothed"
+                          paddingTop={""}
+                          paddingLeft={""}
+                          paddingRight={""}
+                          transform={""}
+                        />
+                      </div>
+                      <div onClick={() => handleCustomTags('tclothed')}>
+                        <SceneCustomMarker 
+                          icon="tclothed"
+                          paddingTop={""}
+                          paddingLeft={""}
+                          paddingRight={""}
+                          transform={""}
+                        />
+                      </div>
+                      <div onClick={() => handleCustomTags('nude')}>
+                        <SceneCustomMarker 
+                          icon="nude"
+                          paddingTop={""}
+                          paddingLeft={""}
+                          paddingRight={""}
+                          transform={""}
+                        />
+                      </div>
+                      <div onClick={() => handleCustomTags('tnude')}>
+                        <SceneCustomMarker 
+                          icon="tnude"
+                          paddingTop={""}
+                          paddingLeft={""}
+                          paddingRight={""}
+                          transform={""}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div className='item7'>
+                    <div style={{ display: "flex", justifyContent: "space-evenly" }}>
+                    <div onClick={() => handleCustomTags('bikini')}>
+                        <SceneCustomMarker 
+                          icon="bikini"
+                          paddingTop={""}
+                          paddingLeft={""}
+                          paddingRight={""}
+                          transform={""}
+                        />
+                      </div>
+                      <div onClick={() => handleCustomTags('tight')}>
+                        <SceneCustomMarker 
+                          icon="tight"
+                          paddingTop={""}
+                          paddingLeft={""}
+                          paddingRight={""}
+                          transform={""}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </Col>
+              <Button
+              className="edit-button"
+              variant="primary"
+              disabled={!customDirty}
+              onClick={() => formik.submitForm()}
+            >
+              <FormattedMessage id="actions.save" />
+            </Button>
+            </Form.Group>   
             <Form.Group controlId="tags" as={Row}>
               {FormUtils.renderLabel({
                 title: intl.formatMessage({ id: "tags" }),
