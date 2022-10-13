@@ -254,6 +254,24 @@ export const ImageEditPanel: React.FC<IProps> = ({
                       case 'tight':
                         currentIds.push("161");
                         break;
+                        case 'bj':
+                          currentIds.push("12");
+                          break;
+                          case 'hj':
+                            currentIds.push("8");
+                            break;
+                            case 'cg':
+                              currentIds.push("27");
+                              break;
+                              case 'rcg':
+                                currentIds.push("25");
+                                break;
+                                case 'doggy':
+                                  currentIds.push("38");
+                                  break;
+                                  case 'missionary':
+                                    currentIds.push("17");
+                                    break;
     }
     formik.setFieldValue("tag_ids", currentIds);
     setMakeDirty(true);
@@ -587,6 +605,70 @@ export const ImageEditPanel: React.FC<IProps> = ({
                         />
                       </div>
                     </div>
+                  </div>
+                  <div className='item8'>
+                  <div style={{ display: "flex", justifyContent: "space-between" }}>
+<div
+  onClick={() => handleCustomTags('bj')}
+>
+<SceneCustomMarker
+  icon="bj"
+  transform={''}
+  paddingTop={'1%'}
+  paddingLeft={''}
+  />
+</div>
+<div
+  onClick={() => handleCustomTags('hj')}
+>
+<SceneCustomMarker
+  icon="hj"
+  transform={''}
+  paddingTop={'1%'}
+  paddingLeft={''}
+  />
+</div>
+<div
+  onClick={() => handleCustomTags('cg')}
+>
+<SceneCustomMarker
+  icon="cg"
+  transform={''}
+  paddingTop={'1%'}
+  paddingLeft={''}
+  />
+</div>
+<div
+  onClick={() => handleCustomTags('rcg')}
+>
+<SceneCustomMarker
+  icon="rcg"
+  transform={'scaleX(-1)'}
+  paddingTop={'1%'}
+  paddingLeft={''}
+  />
+</div>
+<div
+  onClick={() => handleCustomTags('doggy')}
+>
+<SceneCustomMarker
+  icon="doggy"
+  transform={''}
+  paddingTop={'1%'}
+  paddingLeft={''}
+  />
+</div>
+<div
+  onClick={() => handleCustomTags('missionary')}
+>
+<SceneCustomMarker
+  icon="missionary"
+  transform={''}
+  paddingTop={'1%'}
+  paddingLeft={''}
+  />
+</div>
+</div>
                   </div>
                 </div>
               </Col>

@@ -1,16 +1,16 @@
 import React from "react";
 type CustomMarkerProps = {
     icon: string,
-    paddingTop: string,
-    paddingLeft: string,
-    paddingRight: string,
-    transform: string
+    paddingTop?: string,
+    paddingLeft?: string,
+    paddingRight?: string,
+    transform?: string,
+    refresh: number
 }
 
 export const SceneCustomMarker = (props: CustomMarkerProps) => {
     const [checked, setChecked] = React.useState(false);
     const [hover, setHover] = React.useState(false);
-
     const handleClick = () => {
         setChecked(true);
     };
@@ -22,7 +22,7 @@ export const SceneCustomMarker = (props: CustomMarkerProps) => {
      };
 
      const styles = {
-        border: checked ? 'solid green' : hover ? 'solid white' : 'solid black',
+        border: checked ? ('solid green') : (hover ? ('solid white') : ('solid black')),
         paddingLeft: props.paddingLeft,
         paddingRight: props.paddingRight,
         paddingTop: '1%',
@@ -3706,6 +3706,14 @@ export const SceneCustomMarker = (props: CustomMarkerProps) => {
           );
         }
      }
+
+     const performRefresh = () => {
+      setChecked(false);
+     }
+
+     React.useEffect(() => {
+      performRefresh();
+     }, [props.refresh]);
 
     return (
             <div       
