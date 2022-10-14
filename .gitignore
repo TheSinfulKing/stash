@@ -16,7 +16,7 @@
 *.out
 
 # GraphQL generated output
-pkg/models/generated_*.go
+internal/api/generated_*.go
 ui/v2.5/src/core/generated-*.tsx
 
 ####
@@ -34,6 +34,7 @@ ui/v2.5/src/core/generated-*.tsx
 
 # Generated files
 .idea/**/contentModel.xml
+generated
 
 # Sensitive or high-churn files
 .idea/**/dataSources/
@@ -58,3 +59,13 @@ node_modules
 /stash
 dist
 .DS_Store
+
+icon.png
+stash-go.sqlite
+stash-go.sqlite-shm
+stash-go.sqlite-wal
+ffmpeg-release-essentials.zip
+config.yml
+.gitignore
+generated_exec.go
+generated_models.go

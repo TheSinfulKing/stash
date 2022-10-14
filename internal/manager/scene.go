@@ -3,7 +3,7 @@ package manager
 import (
 	"fmt"
 
-	"github.com/stashapp/stash/internal/manager/config"
+	//"github.com/stashapp/stash/internal/manager/config"
 	"github.com/stashapp/stash/pkg/ffmpeg"
 	"github.com/stashapp/stash/pkg/fsutil"
 	"github.com/stashapp/stash/pkg/models"
@@ -64,12 +64,22 @@ func GetSceneStreamPaths(scene *models.Scene, directStreamURL string, maxStreami
 	}
 
 	var ret []*models.SceneStreamEndpoint
-	mimeWebm := ffmpeg.MimeWebm
-	mimeHLS := ffmpeg.MimeHLS
-	mimeMp4 := ffmpeg.MimeMp4
+	//mimeWebm := ffmpeg.MimeWebm
+	//mimeHLS := ffmpeg.MimeHLS
+	//mimeMp4 := ffmpeg.MimeMp4
+	mimeMp3 := "audio/mp3"
 
-	labelWebm := "webm"
-	labelHLS := "HLS"
+	label := "Direct stream"
+	ret = append(ret, &models.SceneStreamEndpoint{
+		URL:      directStreamURL,
+		MimeType: &mimeMp3,
+		Label:    &label,
+	})
+	return ret, nil
+	/*
+
+	//labelWebm := "webm"
+	//labelHLS := "HLS"
 
 	// direct stream should only apply when the audio codec is supported
 	audioCodec := ffmpeg.MissingUnsupported
@@ -167,6 +177,7 @@ func GetSceneStreamPaths(scene *models.Scene, directStreamURL string, maxStreami
 	ret = append(ret, &hls)
 
 	return ret, nil
+	*/
 }
 
 // HasTranscode returns true if a transcoded video exists for the provided

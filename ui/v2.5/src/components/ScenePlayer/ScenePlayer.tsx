@@ -264,7 +264,7 @@ export const ScenePlayer: React.FC<IScenePlayerProps> = ({
           }
         })
         .catch(() => {
-          if (scene.paths.screenshot) player.poster(scene.paths.screenshot);
+          //if (scene.paths.screenshot) player.poster(scene.paths.screenshot);
         });
     }
   }, [scene, initialTimestamp]);
@@ -427,7 +427,7 @@ export const ScenePlayer: React.FC<IScenePlayerProps> = ({
     }
 
     function onPlay(this: VideoJsPlayer) {
-      this.poster("");
+      //this.poster("");
       if (scene?.interactive && interactiveReady.current) {
         interactiveClient.play(this.currentTime());
       }
@@ -467,7 +467,7 @@ export const ScenePlayer: React.FC<IScenePlayerProps> = ({
         if (currentFile != null && !currentFile.includes("m3u8")) {
           // const play = !player.paused();
           // handleError(play);
-          this.error(MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED);
+          //this.error(MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED);
         }
       }
     }
@@ -496,8 +496,8 @@ export const ScenePlayer: React.FC<IScenePlayerProps> = ({
 
     const auto =
       autoplay || (config?.autostartVideo ?? false) || initialTimestamp > 0;
-    if (!auto && scene.paths?.screenshot) player.poster(scene.paths.screenshot);
-    else player.poster("");
+    //if (!auto && scene.paths?.screenshot) player.poster(scene.paths.screenshot);
+    //else player.poster("");
 
     const isLandscape =
       scene.file.height &&
@@ -663,6 +663,10 @@ export const ScenePlayer: React.FC<IScenePlayerProps> = ({
           id={VIDEO_PLAYER_ID}
           className="video-js vjs-big-play-centered"
         />
+        <div style={{display: 'flex', justifyContent: 'center', height: '100%', width: '100%'}}>
+          <img src={scene?.paths?.screenshot ?? ''} style={{maxWidth: '100%', height: '100%', background: "url('https://i.pinimg.com/736x/e7/72/55/e77255e5d9f322162d5dbb5365eba671.jpg') no-repeat center", backgroundSize: '100%'}}>
+          </img>
+        </div>
       </div>
       {scene?.interactive &&
         (interactiveState !== ConnectionState.Ready ||
