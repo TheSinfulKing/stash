@@ -18,6 +18,7 @@ import { FormattedMessage, useIntl } from "react-intl";
 import { LightboxImage } from "./LightboxImage";
 import { ConfigurationContext } from "../Config";
 import { Link } from "react-router-dom";
+import { RatingSystem } from "src/components/Shared/Rating/RatingSystem";
 import { OCounterButton } from "src/components/Scenes/SceneDetails/OCounterButton";
 import {
   mutateImageIncrementO,
@@ -41,7 +42,8 @@ import {
   faSearchMinus,
   faTimes,
 } from "@fortawesome/free-solid-svg-icons";
-import { RatingSystem } from "src/components/Shared/Rating/RatingSystem";
+import { SceneCustomMarker } from '../../components/Scenes/SceneDetails/SceneCustomMarker'
+import { OrganizedButton } from "src/components/Scenes/SceneDetails/OrganizedButton";
 
 const CLASSNAME = "Lightbox";
 const CLASSNAME_HEADER = `${CLASSNAME}-header`;
@@ -100,6 +102,7 @@ export const LightboxComponent: React.FC<IProps> = ({
   const [showOptions, setShowOptions] = useState(false);
   const [imagesLoaded, setImagesLoaded] = useState(0);
   const [navOffset, setNavOffset] = useState<React.CSSProperties | undefined>();
+  const [refresh, doRefresh] = useState(0);
 
   const oldImages = useRef<ILightboxImage[]>([]);
 
@@ -410,8 +413,7 @@ export const LightboxComponent: React.FC<IProps> = ({
       setNavOffset(getNavOffset() ?? undefined);
     }
   }
-
-  const navItems = images.map((image, i) => (
+    const navItems = images.map((image, i) => (
     <img
       src={image.paths.thumbnail ?? ""}
       alt=""
@@ -607,6 +609,27 @@ export const LightboxComponent: React.FC<IProps> = ({
     }
   }
 
+  function setTags(tags: string) {
+    if(currentImage?.id) {
+      let ret: string[];
+      if(currentImage?.tags) {
+        ret = currentImage.tags;
+        ret = ret.concat(tags);
+      }
+      else {
+        ret = [ tags ];
+      }
+      updateImage({
+        variables: {
+          input: {
+            id: currentImage.id,
+            tag_ids: ret
+          }
+        }
+      });
+    }
+  }
+
   async function onIncrementClick() {
     if (currentImage?.id === undefined) return;
     try {
@@ -633,6 +656,118 @@ export const LightboxComponent: React.FC<IProps> = ({
       Toast.error(e);
     }
   }
+
+  const handleCustomTags = (tag: string) => {
+    switch(tag) {
+      case 'organized-s':
+        setTags("345");
+        break;
+      case 'organized-spp':
+        setTags("346");
+        break;
+      case 'stashdbchecked': 
+        setTags("594");
+        break;
+      case 'horizontal': 
+        setTags("5");
+        break;
+      case 'horizvert':
+        setTags("5");
+        setTags("6");
+        break;
+      case 'vert':
+        setTags("6");
+        break;
+      case 'pornstar':
+        setTags("1");
+        break;
+      case 'amateur':
+        setTags("7");
+        break;
+      case 'white':
+        setTags("2");
+        break;
+      case 'black':
+        setTags("102");
+        break;
+      case 'lightskin':
+        setTags("244");
+        break;
+      case 'asian':
+        setTags("49");
+        break;
+      case 'indian':
+        setTags("189");
+        break;
+      case 'hispanic':
+        setTags("93");
+        break;
+      case 'middle-eastern':
+        setTags("67");
+        break;
+      case 'blonde':
+        setTags("9");
+        break;
+        case 'brunette':
+          setTags("18");
+          break;
+          case 'redhead':
+            setTags("28");
+            break;
+            case 'clothed':
+              setTags("75");
+              break;
+              case 'tclothed':
+                setTags("73");
+                break;
+                case 'nude':
+                  setTags("76");
+                  break;
+                  case 'tnude':
+                    setTags("72");
+                    break;
+                    case 'bikini':
+                      setTags("70");
+                      break;
+                      case 'tight':
+                        setTags("161");
+                        break;
+                        case 'bj':
+                          setTags("12");
+                          break;
+                          case 'hj':
+                            setTags("8");
+                            break;
+                            case 'cg':
+                              setTags("27");
+                              break;
+                              case 'rcg':
+                                setTags("25");
+                                break;
+                                case 'doggy':
+                                  setTags("38");
+                                  break;
+                                  case 'missionary':
+                                    setTags("17");
+                                    break;
+    }
+  }
+
+  const onOrganizedClick = async () => {
+    try {
+      //setOrganizedLoading(true);
+      await updateImage({
+        variables: {
+          input: {
+            id: currentImage?.id ?? "",
+            organized: !currentImage?.organized,
+          },
+        },
+      });
+    } catch (e) {
+      Toast.error(e);
+    }
+  };
 
   return (
     <div
@@ -729,7 +864,10 @@ export const LightboxComponent: React.FC<IProps> = ({
         {allowNavigation && (
           <Button
             variant="link"
-            onClick={handleLeft}
+            onClick={() => {
+              handleLeft();
+              doRefresh(prev => prev + 1);
+            }}
             className={`${CLASSNAME_NAVBUTTON} d-none d-lg-block`}
           >
             <Icon icon={faChevronLeft} />
@@ -771,7 +909,10 @@ export const LightboxComponent: React.FC<IProps> = ({
         {allowNavigation && (
           <Button
             variant="link"
-            onClick={handleRight}
+            onClick={() => {
+              handleRight();
+              doRefresh(prev => prev + 1);
+            }}
             className={`${CLASSNAME_NAVBUTTON} d-none d-lg-block`}
           >
             <Icon icon={faChevronRight} />
@@ -797,10 +938,17 @@ export const LightboxComponent: React.FC<IProps> = ({
           </Button>
         </div>
       )}
-      <div className={CLASSNAME_FOOTER}>
+      <div className={CLASSNAME_FOOTER} style={{paddingBottom: '1em', height: '8em'}}>
         <div className={CLASSNAME_FOOTER_LEFT}>
           {currentImage?.id !== undefined && (
             <>
+            <div style={{width: '3em'}}>
+            <OrganizedButton
+                organized={currentImage?.organized ?? false}
+                onClick={onOrganizedClick}
+                loading={false}
+              />
+            </div>
               <div>
                 <OCounterButton
                   onDecrement={onDecrementClick}
@@ -813,17 +961,322 @@ export const LightboxComponent: React.FC<IProps> = ({
                 value={currentImage?.rating100 ?? undefined}
                 onSetRating={(v) => {
                   setRating(v ?? null);
+                  doRefresh(prev => prev + 1);
                 }}
               />
             </>
           )}
-        </div>
-        <div>
           {currentImage?.title && (
             <Link to={`/images/${currentImage.id}`} onClick={() => close()}>
               {currentImage.title ?? ""}
             </Link>
           )}
+        </div>
+        <div style={{display: 'grid', rowGap: '0.5em', paddingTop: '1em'}}>
+          <div className='item1'>
+          <div style={{ display: "flex", justifyContent: "space-evenly" }}>
+                      <div onClick={() => handleCustomTags('organized-s')}>
+                        <SceneCustomMarker 
+                          icon="organizeds"
+                          paddingTop={""}
+                          paddingLeft={""}
+                          paddingRight={""}
+                          transform={""}
+                          refresh={refresh}
+                        />
+                      </div>
+                      <div onClick={() => handleCustomTags('organized-spp')}>
+                        <SceneCustomMarker 
+                          icon="organizedspp"
+                          paddingTop={""}
+                          paddingLeft={""}
+                          paddingRight={""}
+                          transform={""}
+                          refresh={refresh}
+                        />
+                      </div>
+                      <div onClick={() => handleCustomTags('horizontal')}>
+                        <SceneCustomMarker 
+                          icon="horizontal"
+                          paddingTop={""}
+                          paddingLeft={""}
+                          paddingRight={""}
+                          transform={""}
+                          refresh={refresh}
+                        />
+                      </div>
+                      <div onClick={() => handleCustomTags('horizvert')}>
+                        <SceneCustomMarker 
+                          icon="horizvert"
+                          paddingTop={""}
+                          paddingLeft={""}
+                          paddingRight={""}
+                          transform={""}
+                          refresh={refresh}
+                        />
+                      </div>
+                      <div onClick={() => handleCustomTags('vert')}>
+                        <SceneCustomMarker 
+                          icon="vert"
+                          paddingTop={""}
+                          paddingLeft={""}
+                          paddingRight={""}
+                          transform={'rotate(90deg)'}
+                          refresh={refresh}
+                        />
+                      </div>
+                      <div onClick={() => handleCustomTags('pornstar')}>
+                        <SceneCustomMarker 
+                          icon="pornstar"
+                          paddingTop={""}
+                          paddingLeft={""}
+                          paddingRight={""}
+                          transform={""}
+                          refresh={refresh}
+                        />
+                      </div>
+                      <div onClick={() => handleCustomTags('amateur')}>
+                        <SceneCustomMarker 
+                          icon="amateur"
+                          paddingTop={""}
+                          paddingLeft={""}
+                          paddingRight={""}
+                          transform={""}
+                          refresh={refresh}
+                        />
+                      </div>
+                      <div onClick={() => handleCustomTags('indian')}>
+                        <SceneCustomMarker 
+                          icon="indian"
+                          paddingTop={""}
+                          paddingLeft={""}
+                          paddingRight={""}
+                          transform={""}
+                          refresh={refresh}
+                        />
+                      </div>
+                      <div onClick={() => handleCustomTags('middle-eastern')}>
+                        <SceneCustomMarker 
+                          icon="middle-eastern"
+                          paddingTop={""}
+                          paddingLeft={""}
+                          paddingRight={""}
+                          transform={""}
+                          refresh={refresh}
+                        />
+                      </div>
+                      <div onClick={() => handleCustomTags('hispanic')}>
+                        <SceneCustomMarker 
+                          icon="hispanic"
+                          paddingTop={""}
+                          paddingLeft={""}
+                          paddingRight={""}
+                          transform={""}
+                          refresh={refresh}
+                        />
+                      </div>
+                    <div onClick={() => handleCustomTags('white')}>
+                        <SceneCustomMarker 
+                          icon="white"
+                          paddingTop={""}
+                          paddingLeft={""}
+                          paddingRight={""}
+                          transform={""}
+                          refresh={refresh}
+                        />
+                      </div>
+                      <div onClick={() => handleCustomTags('asian')}>
+                        <SceneCustomMarker 
+                          icon="asian"
+                          paddingTop={""}
+                          paddingLeft={""}
+                          paddingRight={""}
+                          transform={""}
+                          refresh={refresh}
+                        />
+                      </div>
+                      <div onClick={() => handleCustomTags('lightskin')}>
+                        <SceneCustomMarker 
+                          icon="lightskin"
+                          paddingTop={""}
+                          paddingLeft={""}
+                          paddingRight={""}
+                          transform={""}
+                          refresh={refresh}
+                        />
+                      </div>
+                      <div onClick={() => handleCustomTags('black')}>
+                        <SceneCustomMarker 
+                          icon="black"
+                          paddingTop={""}
+                          paddingLeft={""}
+                          paddingRight={""}
+                          transform={""}
+                          refresh={refresh}
+                        />
+                      </div>
+            </div>
+          </div>
+          <div className='item2'>
+          <div style={{ display: "flex", justifyContent: "space-evenly" }}>
+          <div onClick={() => handleCustomTags('blonde')}>
+                        <SceneCustomMarker 
+                          icon="blonde"
+                          paddingTop={""}
+                          paddingLeft={""}
+                          paddingRight={""}
+                          transform={""}
+                          refresh={refresh}
+                        />
+                      </div>
+                      <div onClick={() => handleCustomTags('brunette')}>
+                        <SceneCustomMarker 
+                          icon="brunette"
+                          paddingTop={""}
+                          paddingLeft={""}
+                          paddingRight={""}
+                          transform={""}
+                          refresh={refresh}
+                        />
+                      </div>
+                      <div onClick={() => handleCustomTags('redhead')}>
+                        <SceneCustomMarker 
+                          icon="redhead"
+                          paddingTop={""}
+                          paddingLeft={""}
+                          paddingRight={""}
+                          transform={""}
+                          refresh={refresh}
+                        />
+                      </div>
+                      <div onClick={() => handleCustomTags('clothed')}>
+                        <SceneCustomMarker 
+                          icon="clothed"
+                          paddingTop={""}
+                          paddingLeft={""}
+                          paddingRight={""}
+                          transform={""}
+                          refresh={refresh}
+                        />
+                      </div>
+                      <div onClick={() => handleCustomTags('tclothed')}>
+                        <SceneCustomMarker 
+                          icon="tclothed"
+                          paddingTop={""}
+                          paddingLeft={""}
+                          paddingRight={""}
+                          transform={""}
+                          refresh={refresh}
+                        />
+                      </div>
+                      <div onClick={() => handleCustomTags('nude')}>
+                        <SceneCustomMarker 
+                          icon="nude"
+                          paddingTop={""}
+                          paddingLeft={""}
+                          paddingRight={""}
+                          transform={""}
+                          refresh={refresh}
+                        />
+                      </div>
+                      <div onClick={() => handleCustomTags('tnude')}>
+                        <SceneCustomMarker 
+                          icon="tnude"
+                          paddingTop={""}
+                          paddingLeft={""}
+                          paddingRight={""}
+                          transform={""}
+                          refresh={refresh}
+                        />
+                      </div>
+                      <div onClick={() => handleCustomTags('bikini')}>
+                        <SceneCustomMarker 
+                          icon="bikini"
+                          paddingTop={""}
+                          paddingLeft={""}
+                          paddingRight={""}
+                          transform={""}
+                          refresh={refresh}
+                        />
+                      </div>
+                      <div onClick={() => handleCustomTags('tight')}>
+                        <SceneCustomMarker 
+                          icon="tight"
+                          paddingTop={""}
+                          paddingLeft={""}
+                          paddingRight={""}
+                          transform={""}
+                          refresh={refresh}
+                        />
+                      </div>
+                      <div
+  onClick={() => handleCustomTags('bj')}
+>
+<SceneCustomMarker
+  icon="bj"
+  transform={''}
+  paddingTop={'1%'}
+  paddingLeft={''}
+  refresh={refresh}
+  />
+</div>
+<div
+  onClick={() => handleCustomTags('hj')}
+>
+<SceneCustomMarker
+  icon="hj"
+  transform={''}
+  paddingTop={'1%'}
+  paddingLeft={''}
+  refresh={refresh}
+  />
+</div>
+<div
+  onClick={() => handleCustomTags('cg')}
+>
+<SceneCustomMarker
+  icon="cg"
+  transform={''}
+  paddingTop={'1%'}
+  paddingLeft={''}
+  refresh={refresh}
+  />
+</div>
+<div
+  onClick={() => handleCustomTags('rcg')}
+>
+<SceneCustomMarker
+  icon="rcg"
+  transform={'scaleX(-1)'}
+  paddingTop={'1%'}
+  paddingLeft={''}
+  refresh={refresh}
+  />
+</div>
+<div
+  onClick={() => handleCustomTags('doggy')}
+>
+<SceneCustomMarker
+  icon="doggy"
+  transform={''}
+  paddingTop={'1%'}
+  paddingLeft={''}
+  refresh={refresh}
+  />
+</div>
+<div
+  onClick={() => handleCustomTags('missionary')}
+>
+<SceneCustomMarker
+  icon="missionary"
+  transform={''}
+  paddingTop={'1%'}
+  paddingLeft={''}
+  refresh={refresh}
+  />
+</div>
+          </div>           
+          </div>
         </div>
         <div></div>
       </div>
