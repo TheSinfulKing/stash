@@ -47,7 +47,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { RatingSystem } from "src/components/Shared/Rating/RatingSystem";
 import { useDebounce } from "../debounce";
-import { isVideo } from "src/utils/visualFile";
+import { SceneCustomMarker } from '../../components/Scenes/SceneDetails/SceneCustomMarker'
 
 const CLASSNAME = "Lightbox";
 const CLASSNAME_HEADER = `${CLASSNAME}-header`;
@@ -116,6 +116,7 @@ export const LightboxComponent: React.FC<IProps> = ({
   const [showChapters, setShowChapters] = useState(false);
   const [imagesLoaded, setImagesLoaded] = useState(0);
   const [navOffset, setNavOffset] = useState<React.CSSProperties | undefined>();
+  const [refresh, doRefresh] = useState(0);
 
   const oldImages = useRef<ILightboxImage[]>([]);
 
@@ -426,25 +427,20 @@ export const LightboxComponent: React.FC<IProps> = ({
     }
   }
 
-  const navItems = images.map((image, i) =>
-    React.createElement(image.paths.preview != "" ? "video" : "img", {
-      loop: image.paths.preview != "",
-      autoPlay: image.paths.preview != "",
-      src:
-        image.paths.preview != ""
-          ? image.paths.preview ?? ""
-          : image.paths.thumbnail ?? "",
-      alt: "",
-      className: cx(CLASSNAME_NAVIMAGE, {
+  const navItems = images.map((image, i) => (
+    <img
+      src={image.paths.thumbnail ?? ""}
+      alt=""
+      className={cx(CLASSNAME_NAVIMAGE, {
         [CLASSNAME_NAVSELECTED]: i === index,
-      }),
-      onClick: (e: React.MouseEvent) => selectIndex(e, i),
-      role: "presentation",
-      loading: "lazy",
-      key: image.paths.thumbnail,
-      onLoad: imageLoaded,
-    })
-  );
+      })}
+      onClick={(e: React.MouseEvent) => selectIndex(e, i)}
+      role="presentation"
+      loading="lazy"
+      key={image.paths.thumbnail}
+      onLoad={imageLoaded}
+    />
+  ));
 
   const onDelayChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let numberValue = Number.parseInt(e.currentTarget.value, 10);
@@ -472,7 +468,7 @@ export const LightboxComponent: React.FC<IProps> = ({
   function gotoPage(imageIndex: number) {
     const indexInPage = (imageIndex - 1) % pageSize;
     if (pageCallback) {
-      let jumppage = Math.floor((imageIndex - 1) / pageSize) + 1;
+      let jumppage = Math.floor(imageIndex / pageSize) + 1;
       if (page !== jumppage) {
         pageCallback({ page: jumppage });
         oldImages.current = images;
@@ -686,6 +682,27 @@ export const LightboxComponent: React.FC<IProps> = ({
     }
   }
 
+  function setTags(tags: string) {
+    if(currentImage?.id) {
+      let ret;
+      if(currentImage?.tags) {
+        ret = currentImage.tags.map((tag) => tag.id);
+        ret = ret.concat(tags);
+      }
+      else {
+        ret = tags;
+      }
+      updateImage({
+        variables: {
+          input: {
+            id: currentImage.id,
+            tag_ids: ret
+          }
+        }
+      });
+    }
+  }
+
   async function onIncrementClick() {
     if (currentImage?.id === undefined) return;
     try {
@@ -721,6 +738,133 @@ export const LightboxComponent: React.FC<IProps> = ({
         )
       : "";
 
+  const handleCustomTags = (tag: string) => {
+    switch(tag) {
+      case 'organized-s':
+        setTags("345");
+        break;
+      case 'organized-spp':
+        setTags("346");
+        break;
+      case 'stashdbchecked': 
+        setTags("594");
+        break;
+      case 'horizontal': 
+        setTags("5");
+        break;
+      case 'horizvert':
+        setTags("5");
+        setTags("6");
+        break;
+      case 'vert':
+        setTags("6");
+        break;
+      case 'pornstar':
+        setTags("1");
+        break;
+      case 'amateur':
+        setTags("7");
+        break;
+      case 'white':
+        setTags("2");
+        break;
+      case 'black':
+        setTags("102");
+        break;
+      case 'lightskin':
+        setTags("244");
+        break;
+      case 'asian':
+        setTags("49");
+        break;
+      case 'indian':
+        setTags("189");
+        break;
+      case 'hispanic':
+        setTags("93");
+        break;
+      case 'middle-eastern':
+        setTags("67");
+        break;
+      case 'blonde':
+        setTags("9");
+        break;
+        case 'brunette':
+          setTags("18");
+          break;
+          case 'redhead':
+            setTags("28");
+            break;
+            case 'clothed':
+              setTags("75");
+              break;
+              case 'tclothed':
+                setTags("73");
+                break;
+                case 'nude':
+                  setTags("76");
+                  break;
+                  case 'tnude':
+                    setTags("72");
+                    break;
+                    case 'bikini':
+                      setTags("70");
+                      break;
+                      case 'tight':
+                        setTags("161");
+                        break;
+                        case 'bj':
+                          setTags("12");
+                          break;
+                          case 'hj':
+                            setTags("8");
+                            break;
+                            case 'cg':
+                              setTags("27");
+                              break;
+                              case 'rcg':
+                                setTags("25");
+                                break;
+                                case 'doggy':
+                                  setTags("38");
+                                  break;
+                                  case 'missionary':
+                                    setTags("17");
+                                    break;
+                                  case 'ass':
+                                    setTags("69");
+                                    break;
+                                  case 'underwear':
+                                    setTags("204");
+                                    break;
+                                  case 'celeb':
+                                    setTags("90");
+                                    break;
+                                  case 'darkhair':
+                                    setTags("48");
+                                    break;
+                                  case 'titjob':
+                                    setTags("35");
+                                    break;
+    }
+  }
+
+  const onOrganizedClick = async () => {
+    try {
+      //setOrganizedLoading(true);
+      await updateImage({
+        variables: {
+          input: {
+            id: currentImage?.id ?? "",
+            organized: !currentImage?.organized,
+          },
+        },
+      });
+    } catch (e) {
+      Toast.error(e);
+    }
+  };
+
   return (
     <div
       className={CLASSNAME}
@@ -729,11 +873,9 @@ export const LightboxComponent: React.FC<IProps> = ({
       onClick={handleClose}
     >
       <div className={CLASSNAME_HEADER}>
-        <div className={CLASSNAME_LEFT_SPACER}>{renderChapterMenu()}</div>
+        <div className={CLASSNAME_LEFT_SPACER} />
         <div className={CLASSNAME_INDICATOR}>
-          <span>
-            {chapterHeader()} {pageHeader}
-          </span>
+          <span>{pageHeader}</span>
           {images.length > 1 ? (
             <b ref={indicatorRef}>{`${currentIndex + 1} / ${images.length}`}</b>
           ) : undefined}
@@ -818,7 +960,10 @@ export const LightboxComponent: React.FC<IProps> = ({
         {allowNavigation && (
           <Button
             variant="link"
-            onClick={handleLeft}
+            onClick={() => {
+              handleLeft();
+              doRefresh(prev => prev + 1);
+            }}
             className={`${CLASSNAME_NAVBUTTON} d-none d-lg-block`}
           >
             <Icon icon={faChevronLeft} />
@@ -851,7 +996,6 @@ export const LightboxComponent: React.FC<IProps> = ({
                   scrollAttemptsBeforeChange={scrollAttemptsBeforeChange}
                   setZoom={(v) => setZoom(v)}
                   resetPosition={resetPosition}
-                  isVideo={isVideo(image.visual_files?.[0] ?? {})}
                 />
               ) : undefined}
             </div>
@@ -861,7 +1005,10 @@ export const LightboxComponent: React.FC<IProps> = ({
         {allowNavigation && (
           <Button
             variant="link"
-            onClick={handleRight}
+            onClick={() => {
+              handleRight();
+              doRefresh(prev => prev + 1);
+            }}
             className={`${CLASSNAME_NAVBUTTON} d-none d-lg-block`}
           >
             <Icon icon={faChevronRight} />
@@ -903,6 +1050,7 @@ export const LightboxComponent: React.FC<IProps> = ({
                 value={currentImage?.rating100 ?? undefined}
                 onSetRating={(v) => {
                   setRating(v ?? null);
+                  doRefresh(prev => prev + 1);
                 }}
               />
             </>
@@ -914,6 +1062,358 @@ export const LightboxComponent: React.FC<IProps> = ({
               {currentImage.title ?? ""}
             </Link>
           )}
+        </div>
+        <div style={{display: 'grid', rowGap: '0.5em', paddingTop: '1em'}}>
+          <div className='item1'>
+          <div style={{ display: "flex", justifyContent: "space-evenly" }}>
+                      <div onClick={() => handleCustomTags('organized-s')}>
+                        <SceneCustomMarker 
+                          icon="organizeds"
+                          paddingTop={""}
+                          paddingLeft={""}
+                          paddingRight={""}
+                          transform={""}
+                          refresh={refresh}
+                        />
+                      </div>
+                      <div onClick={() => handleCustomTags('organized-spp')}>
+                        <SceneCustomMarker 
+                          icon="organizedspp"
+                          paddingTop={""}
+                          paddingLeft={""}
+                          paddingRight={""}
+                          transform={""}
+                          refresh={refresh}
+                        />
+                      </div>
+                      <div onClick={() => handleCustomTags('horizontal')}>
+                        <SceneCustomMarker 
+                          icon="horizontal"
+                          paddingTop={""}
+                          paddingLeft={""}
+                          paddingRight={""}
+                          transform={""}
+                          refresh={refresh}
+                        />
+                      </div>
+                      <div onClick={() => handleCustomTags('horizvert')}>
+                        <SceneCustomMarker 
+                          icon="horizvert"
+                          paddingTop={""}
+                          paddingLeft={""}
+                          paddingRight={""}
+                          transform={""}
+                          refresh={refresh}
+                        />
+                      </div>
+                      <div onClick={() => handleCustomTags('vert')}>
+                        <SceneCustomMarker 
+                          icon="vert"
+                          paddingTop={""}
+                          paddingLeft={""}
+                          paddingRight={""}
+                          transform={'rotate(90deg)'}
+                          refresh={refresh}
+                        />
+                      </div>
+                      <div onClick={() => handleCustomTags('pornstar')}>
+                        <SceneCustomMarker 
+                          icon="pornstar"
+                          paddingTop={""}
+                          paddingLeft={""}
+                          paddingRight={""}
+                          transform={""}
+                          refresh={refresh}
+                        />
+                      </div>
+                      <div onClick={() => handleCustomTags('amateur')}>
+                        <SceneCustomMarker 
+                          icon="amateur"
+                          paddingTop={""}
+                          paddingLeft={""}
+                          paddingRight={""}
+                          transform={""}
+                          refresh={refresh}
+                        />
+                      </div>
+                      <div onClick={() => handleCustomTags('celeb')}>
+                        <SceneCustomMarker 
+                          icon="celeb"
+                          paddingTop={""}
+                          paddingLeft={""}
+                          paddingRight={""}
+                          transform={""}
+                        />
+                        </div>
+                      <div onClick={() => handleCustomTags('indian')}>
+                        <SceneCustomMarker 
+                          icon="indian"
+                          paddingTop={""}
+                          paddingLeft={""}
+                          paddingRight={""}
+                          transform={""}
+                          refresh={refresh}
+                        />
+                      </div>
+                      <div onClick={() => handleCustomTags('middle-eastern')}>
+                        <SceneCustomMarker 
+                          icon="middle-eastern"
+                          paddingTop={""}
+                          paddingLeft={""}
+                          paddingRight={""}
+                          transform={""}
+                          refresh={refresh}
+                        />
+                      </div>
+                      <div onClick={() => handleCustomTags('hispanic')}>
+                        <SceneCustomMarker 
+                          icon="hispanic"
+                          paddingTop={""}
+                          paddingLeft={""}
+                          paddingRight={""}
+                          transform={""}
+                          refresh={refresh}
+                        />
+                      </div>
+                    <div onClick={() => handleCustomTags('white')}>
+                        <SceneCustomMarker 
+                          icon="white"
+                          paddingTop={""}
+                          paddingLeft={""}
+                          paddingRight={""}
+                          transform={""}
+                          refresh={refresh}
+                        />
+                      </div>
+                      <div onClick={() => handleCustomTags('asian')}>
+                        <SceneCustomMarker 
+                          icon="asian"
+                          paddingTop={""}
+                          paddingLeft={""}
+                          paddingRight={""}
+                          transform={""}
+                          refresh={refresh}
+                        />
+                      </div>
+                      <div onClick={() => handleCustomTags('lightskin')}>
+                        <SceneCustomMarker 
+                          icon="lightskin"
+                          paddingTop={""}
+                          paddingLeft={""}
+                          paddingRight={""}
+                          transform={""}
+                          refresh={refresh}
+                        />
+                      </div>
+                      <div onClick={() => handleCustomTags('black')}>
+                        <SceneCustomMarker 
+                          icon="black"
+                          paddingTop={""}
+                          paddingLeft={""}
+                          paddingRight={""}
+                          transform={""}
+                          refresh={refresh}
+                        />
+                      </div>
+            </div>
+          </div>
+          <div className='item2'>
+          <div style={{ display: "flex", justifyContent: "space-evenly" }}>
+          <div onClick={() => handleCustomTags('blonde')}>
+                        <SceneCustomMarker 
+                          icon="blonde"
+                          paddingTop={""}
+                          paddingLeft={""}
+                          paddingRight={""}
+                          transform={""}
+                          refresh={refresh}
+                        />
+                      </div>
+                      <div onClick={() => handleCustomTags('brunette')}>
+                        <SceneCustomMarker 
+                          icon="brunette"
+                          paddingTop={""}
+                          paddingLeft={""}
+                          paddingRight={""}
+                          transform={""}
+                          refresh={refresh}
+                        />
+                      </div>
+                      <div onClick={() => handleCustomTags('redhead')}>
+                        <SceneCustomMarker 
+                          icon="redhead"
+                          paddingTop={""}
+                          paddingLeft={""}
+                          paddingRight={""}
+                          transform={""}
+                          refresh={refresh}
+                        />
+                      </div>
+                      <div onClick={() => handleCustomTags('darkhair')}>
+                        <SceneCustomMarker 
+                          icon="black"
+                          paddingTop={""}
+                          paddingLeft={""}
+                          paddingRight={""}
+                          transform={""}
+                        />
+                      </div>
+                      <div onClick={() => handleCustomTags('clothed')}>
+                        <SceneCustomMarker 
+                          icon="clothed"
+                          paddingTop={""}
+                          paddingLeft={""}
+                          paddingRight={""}
+                          transform={""}
+                          refresh={refresh}
+                        />
+                      </div>
+                      <div onClick={() => handleCustomTags('tclothed')}>
+                        <SceneCustomMarker 
+                          icon="tclothed"
+                          paddingTop={""}
+                          paddingLeft={""}
+                          paddingRight={""}
+                          transform={""}
+                          refresh={refresh}
+                        />
+                      </div>
+                      <div onClick={() => handleCustomTags('nude')}>
+                        <SceneCustomMarker 
+                          icon="nude"
+                          paddingTop={""}
+                          paddingLeft={""}
+                          paddingRight={""}
+                          transform={""}
+                          refresh={refresh}
+                        />
+                      </div>
+                      <div onClick={() => handleCustomTags('tnude')}>
+                        <SceneCustomMarker 
+                          icon="tnude"
+                          paddingTop={""}
+                          paddingLeft={""}
+                          paddingRight={""}
+                          transform={""}
+                          refresh={refresh}
+                        />
+                      </div>
+                      <div onClick={() => handleCustomTags('bikini')}>
+                        <SceneCustomMarker 
+                          icon="bikini"
+                          paddingTop={""}
+                          paddingLeft={""}
+                          paddingRight={""}
+                          transform={""}
+                          refresh={refresh}
+                        />
+                      </div>
+                      <div onClick={() => handleCustomTags('underwear')}>
+                        <SceneCustomMarker 
+                          icon="underwear"
+                          paddingTop={""}
+                          paddingLeft={""}
+                          paddingRight={""}
+                          transform={""}
+                        />
+                      </div>
+                      <div onClick={() => handleCustomTags('ass')}>
+                        <SceneCustomMarker 
+                          icon="ass"
+                          paddingTop={""}
+                          paddingLeft={""}
+                          paddingRight={""}
+                          transform={""}
+                        />
+                      </div>
+                      <div onClick={() => handleCustomTags('tight')}>
+                        <SceneCustomMarker 
+                          icon="tight"
+                          paddingTop={""}
+                          paddingLeft={""}
+                          paddingRight={""}
+                          transform={""}
+                          refresh={refresh}
+                        />
+                      </div>
+                      <div
+  onClick={() => handleCustomTags('bj')}
+>
+<SceneCustomMarker
+  icon="bj"
+  transform={''}
+  paddingTop={'1%'}
+  paddingLeft={''}
+  refresh={refresh}
+  />
+</div>
+<div
+  onClick={() => handleCustomTags('hj')}
+>
+<SceneCustomMarker
+  icon="hj"
+  transform={''}
+  paddingTop={'1%'}
+  paddingLeft={''}
+  refresh={refresh}
+  />
+</div>
+<div
+  onClick={() => handleCustomTags('titjob')}
+>
+<SceneCustomMarker
+  icon="tits"
+  transform={''}
+  paddingTop={'1%'}
+  paddingLeft={''}
+  />
+</div>
+<div
+  onClick={() => handleCustomTags('cg')}
+>
+<SceneCustomMarker
+  icon="cg"
+  transform={''}
+  paddingTop={'1%'}
+  paddingLeft={''}
+  refresh={refresh}
+  />
+</div>
+<div
+  onClick={() => handleCustomTags('rcg')}
+>
+<SceneCustomMarker
+  icon="rcg"
+  transform={'scaleX(-1)'}
+  paddingTop={'1%'}
+  paddingLeft={''}
+  refresh={refresh}
+  />
+</div>
+<div
+  onClick={() => handleCustomTags('doggy')}
+>
+<SceneCustomMarker
+  icon="doggy"
+  transform={''}
+  paddingTop={'1%'}
+  paddingLeft={''}
+  refresh={refresh}
+  />
+</div>
+<div
+  onClick={() => handleCustomTags('missionary')}
+>
+<SceneCustomMarker
+  icon="missionary"
+  transform={''}
+  paddingTop={'1%'}
+  paddingLeft={''}
+  refresh={refresh}
+  />
+</div>
+          </div>           
+          </div>
         </div>
         <div></div>
       </div>

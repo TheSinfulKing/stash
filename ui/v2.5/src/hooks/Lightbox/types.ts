@@ -16,9 +16,11 @@ interface IFiles {
 export interface ILightboxImage {
   id?: string;
   title?: GQL.Maybe<string>;
+  tags?: GQL.Maybe<string[]>;
   rating100?: GQL.Maybe<number>;
   o_counter?: GQL.Maybe<number>;
   paths: IImagePaths;
+  organized: GQL.Maybe<boolean>;
   visual_files?: GQL.Maybe<IFiles>[];
 }
 
